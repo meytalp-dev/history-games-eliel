@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מי אני? — ניחוש מלחמה</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800;900&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a0a2e;
+  --paper: #fef9f0;
+  --gold: #d4900a;
+  --gold-light: #f5c842;
+  --red: #b91c1c;
+  --green: #15803d;
+  --blue: #1d4ed8;
+  --shadow: rgba(26,10,46,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Rubik', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(212,144,10,0.06) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(185,28,28,0.05) 0%, transparent 40%),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(26,10,46,0.02) 40px, rgba(26,10,46,0.02) 41px);
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+header {
+  text-align: center;
+  padding: 20px 0 28px;
+  border-bottom: 3px double var(--gold);
+  margin-bottom: 28px;
+}
+
+.badge {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--gold-light);
+  font-family: 'Secular One', sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  padding: 4px 14px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.title {
+  font-family: 'Secular One', sans-serif;
+  font-size: clamp(2.2rem, 7vw, 3.8rem);
+  color: var(--ink);
+  line-height: 1;
+  text-shadow: 3px 3px 0 var(--gold-light);
+}
+
+.subtitle {
+  color: rgba(26,10,46,0.55);
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+/* Score bar */
+.scorebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--ink);
+  color: var(--gold-light);
+  border-radius: 12px;
+  padding: 12px 22px;
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.scorebar-item { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.scorebar-val { font-size: 1.5rem; font-family: 'Secular One', sans-serif; }
+.scorebar-label { font-size: 0.65rem; opacity: 0.7; letter-spacing: 1px; }
+
+/* Clue reveal section */
+.clue-stage {
+  background: white;
+  border-radius: 16px;
+  border: 2px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 28px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+.clue-stage::before {
+  content: '?';
+  position: absolute;
+  left: -10px;
+  top: -20px;
+  font-size: 12rem;
+  font-family: 'Secular One', sans-serif;
+  color: rgba(26,10,46,0.03);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.clue-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.clue-counter {
+  display: flex;
+  gap: 8px;
+}
+
+.clue-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  transition: all 0.3s ease;
+  background: white;
+  color: var(--ink);
+}
+
+.clue-dot.revealed {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+  transform: scale(1.1);
+}
+
+.points-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 50px;
+  background: rgba(245,200,66,0.2);
+  color: var(--gold);
+  border: 1px solid var(--gold-light);
+}
+
+.clues-list { display: flex; flex-direction: column; gap: 12px; }
+
+.clue-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  animation: clueReveal 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  opacity: 0;
+}
+
+.clue-item.show { opacity: 1; }
+
+@keyframes clueReveal {
+  from { transform: translateX(30px) scale(0.9); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+.clue-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--gold-light);
+  font-size: 0.8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.clue-text {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.clue-hidden {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: rgba(26,10,46,0.35);
+  font-size: 0.9rem;
+  border: 2px dashed rgba(26,10,46,0.2);
+  border-radius: 10px;
+  padding: 10px 16px;
+  transition: all 0.2s;
+  background: rgba(26,10,46,0.02);
+}
+
+.clue-hidden:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(245,200,66,0.05);
+}
+
+/* Answer grid */
+.answer-section { margin-bottom: 20px; }
+.answer-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(26,10,46,0.4);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.answer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.answer-btn {
+  padding: 14px 12px;
+  border-radius: 12px;
+  border: 2px solid rgba(26,10,46,0.15);
+  background: white;
+  color: var(--ink);
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: right;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 2px 2px 0 rgba(26,10,46,0.08);
+}
+
+.answer-btn:hover:not(:disabled) {
+  border-color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  transform: translate(-1px, -1px);
+}
+
+.answer-btn.correct {
+  background: #dcfce7;
+  border-color: var(--green);
+  color: var(--green);
+  box-shadow: 3px 3px 0 var(--green);
+}
+
+.answer-btn.wrong {
+  background: #fee2e2;
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 3px 3px 0 var(--red);
+  animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.answer-btn:disabled { cursor: default; }
+.answer-btn .btn-icon { font-size: 1.2rem; }
+
+/* Action row */
+.action-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  font-family: 'Secular One', sans-serif;
+  font-size: 0.95rem;
+  padding: 12px 24px;
+  border-radius: 10px;
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.5px;
+}
+
+.btn-reveal {
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+}
+
+.btn-reveal:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink); }
+.btn-reveal:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: 3px 3px 0 var(--ink); }
+
+.btn-next {
+  background: var(--ink);
+  color: var(--gold-light);
+  box-shadow: 3px 3px 0 rgba(26,10,46,0.4);
+  display: none;
+}
+
+.btn-next:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 rgba(26,10,46,0.4); }
+.btn-next.show { display: block; }
+
+.btn-skip {
+  background: white;
+  color: rgba(26,10,46,0.5);
+  border-color: rgba(26,10,46,0.2);
+  box-shadow: 2px 2px 0 rgba(26,10,46,0.1);
+  font-size: 0.8rem;
+  padding: 12px 18px;
+}
+
+/* Feedback */
+.feedback {
+  text-align: center;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 16px;
+  display: none;
+  animation: feedIn 0.3s ease;
+}
+
+@keyframes feedIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.feedback.success { background: #dcfce7; color: var(--green); display: block; border: 2px solid var(--green); }
+.feedback.fail { background: #fee2e2; color: var(--red); display: block; border: 2px solid var(--red); }
+
+/* Progress */
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.progress-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(26,10,46,0.1);
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), #e05c00);
+  border-radius: 50px;
+  transition: width 0.5s ease;
+}
+
+.progress-text { font-size: 0.75rem; font-weight: 700; color: rgba(26,10,46,0.5); white-space: nowrap; }
+
+/* Overlay */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(26,10,46,0.85);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.overlay.active { display: flex; }
+
+.result-card {
+  background: var(--paper);
+  border: 3px solid var(--ink);
+  border-radius: 20px;
+  padding: 40px 44px;
+  text-align: center;
+  max-width: 380px;
+  box-shadow: 10px 10px 0 var(--ink);
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.5) rotate(-5deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.result-emoji { font-size: 4rem; display: block; margin-bottom: 12px; }
+.result-title {
+  font-family: 'Secular One', sans-serif;
+  font-size: 2.2rem;
+  color: var(--ink);
+  margin-bottom: 6px;
+  text-shadow: 2px 2px 0 var(--gold-light);
+}
+.result-sub { color: rgba(26,10,46,0.6); font-size: 0.9rem; margin-bottom: 16px; }
+.result-score { font-size: 3rem; font-family: 'Secular One', sans-serif; color: var(--gold); margin-bottom: 20px; }
+
+@media (max-width: 500px) {
+  .answer-grid { grid-template-columns: 1fr; }
+  .result-card { padding: 28px 20px; margin: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="badge">משחק 1</div>
+    <div class="title">🕵️ מי אני?</div>
+    <div class="subtitle">נחש את המלחמה לפי הרמזים — ככל שמנחש מהר יותר, יותר נקודות!</div>
+  </header>
+
+  <div class="scorebar">
+    <div class="scorebar-item"><span class="scorebar-val" id="score">0</span><span class="scorebar-label">ניקוד</span></div>
+    <div class="scorebar-item"><span class="scorebar-val" id="qNum">1</span><span class="scorebar-label">שאלה</span></div>
+    <div class="scorebar-item"><span class="scorebar-val" id="correct">0</span><span class="scorebar-label">נכון</span></div>
+    <div class="scorebar-item"><span class="scorebar-val" id="wrong">0</span><span class="scorebar-label">טעות</span></div>
+  </div>
+
+  <div class="progress-row">
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">0 / 10</div>
+  </div>
+
+  <div class="clue-stage">
+    <div class="clue-header">
+      <div class="clue-counter" id="clueCounter"></div>
+      <div class="points-tag" id="pointsTag">💎 30 נקודות</div>
+    </div>
+    <div class="clues-list" id="cluesList"></div>
+  </div>
+
+  <div class="feedback" id="feedback"></div>
+
+  <div class="answer-section">
+    <div class="answer-label">בחר את המלחמה הנכונה ↓</div>
+    <div class="answer-grid" id="answerGrid"></div>
+  </div>
+
+  <div class="action-row">
+    <button class="btn btn-reveal" id="revealBtn" onclick="revealNextClue()">👁️ גלה רמז נוסף (−10 נקודות)</button>
+    <button class="btn btn-next show" id="nextBtn" onclick="nextQuestion()" style="display:none">הבא ←</button>
+    <button class="btn btn-skip" onclick="skipQuestion()">דלג ⟫</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="result-card">
+    <span class="result-emoji" id="rEmoji">🏆</span>
+    <div class="result-title" id="rTitle">כל הכבוד!</div>
+    <div class="result-sub" id="rSub"></div>
+    <div class="result-score" id="rScore">0</div>
+    <button class="btn btn-reveal" onclick="startGame()" style="width:100%">🔄 שחק שוב</button>
+  </div>
+</div>
+
+<script>
+const WARS = [
+  {
+    name: 'מלחמת העצמאות',
+    year: 1948,
+    icon: '🏛️',
+    clues: [
+      'מלחמה זו החלה ביום אחד עם הכרזת עצמאות המדינה',
+      'שבע מדינות ערב תקפו את ישראל יחד',
+      'המלחמה הסתיימה ב-1949 עם חתימת הסכמי שביתת נשק',
+    ],
+    options: ['מלחמת העצמאות', 'מבצע קדש', 'מלחמת ששת הימים', 'מלחמת יום הכיפורים'],
+  },
+  {
+    name: 'מבצע קדש',
+    year: 1956,
+    icon: '🌊',
+    clues: [
+      'המבצע קשור להלאמת תעלה מפורסמת על ידי מצרים',
+      'ישראל לחמה לצד צרפת ובריטניה',
+      'המבצע נקרא גם "מבצע סיני" ונמשך כשבוע',
+    ],
+    options: ['מלחמת ההתשה', 'מבצע קדש', 'מלחמת לבנון הראשונה', 'מלחמת העצמאות'],
+  },
+  {
+    name: 'מלחמת ששת הימים',
+    year: 1967,
+    icon: '✈️',
+    clues: [
+      'המלחמה נקראת על שם אורכה המדויק',
+      'ישראל כבשה את רצועת עזה, סיני, הגדה המערבית ורמת הגולן',
+      'צה"ל פתח במתקפת אוויר מפתיעה שהשמידה מאות מטוסים',
+    ],
+    options: ['מלחמת ששת הימים', 'מלחמת ההתשה', 'מבצע קדש', 'מלחמת יום הכיפורים'],
+  },
+  {
+    name: 'מלחמת ההתשה',
+    year: 1969,
+    icon: '🔫',
+    clues: [
+      'לחימה לאורך קו הפסקת האש, ללא כיבוש שטח חדש',
+      'רוב הלחימה התנהלה לאורך תעלת סואץ',
+      'המלחמה נמשכה כשלוש שנים — לחימה מתמשכת ומתישה',
+    ],
+    options: ['מלחמת ששת הימים', 'מלחמת יום הכיפורים', 'מלחמת ההתשה', 'מבצע קדש'],
+  },
+  {
+    name: 'מלחמת יום הכיפורים',
+    year: 1973,
+    icon: '⚔️',
+    clues: [
+      'ישראל הופתעה — המתקפה בוצעה ביום הקדוש ביותר בשנה',
+      'מצרים וסוריה תקפו בו-זמנית משני חזיתות',
+      'ישראל סבלה אבידות קשות בימים הראשונים לפני שהצליחה להתאושש',
+    ],
+    options: ['מלחמת יום הכיפורים', 'מלחמת ההתשה', 'מלחמת ששת הימים', 'מלחמת לבנון הראשונה'],
+  },
+  {
+    name: 'מבצע ליטני',
+    year: 1978,
+    icon: '🌲',
+    clues: [
+      'המבצע נקרא על שם נהר בלבנון',
+      'המטרה הייתה דחיקת ארגוני המחבלים צפונה',
+      'זו הייתה הפעולה הצבאית הישראלית הגדולה הראשונה בלבנון',
+    ],
+    options: ['מלחמת לבנון השנייה', 'מבצע ליטני', 'מבצע צוק איתן', 'מלחמת לבנון הראשונה'],
+  },
+  {
+    name: 'מלחמת לבנון הראשונה',
+    year: 1982,
+    icon: '🏔️',
+    clues: [
+      'שמה הרשמי היה "מבצע שלום הגליל"',
+      'צבא ישראל הגיע עד ביירות',
+      'המלחמה הובילה לפינוי אש"ף מלבנון',
+    ],
+    options: ['מבצע ליטני', 'מלחמת לבנון השנייה', 'מלחמת לבנון הראשונה', 'מבצע עופרת יצוקה'],
+  },
+  {
+    name: 'מלחמת לבנון השנייה',
+    year: 2006,
+    icon: '🚀',
+    clues: [
+      'פרצה לאחר חטיפת שני חיילים על ידי חיזבאללה',
+      'נורו אלפי רקטות על ערים בצפון ישראל',
+      'המלחמה נמשכה 34 יום',
+    ],
+    options: ['מלחמת לבנון הראשונה', 'מבצע עופרת יצוקה', 'מלחמת לבנון השנייה', 'מבצע צוק איתן'],
+  },
+  {
+    name: 'מבצע עופרת יצוקה',
+    year: 2008,
+    icon: '🛡️',
+    clues: [
+      'מבצע בחורף, שנת 2008–2009',
+      'הלחימה הייתה נגד חמאס ברצועת עזה',
+      'שם המבצע לקוח מסביבון חנוכה',
+    ],
+    options: ['מלחמת לבנון השנייה', 'מבצע צוק איתן', 'מבצע עמוד ענן', 'מבצע עופרת יצוקה'],
+  },
+  {
+    name: 'מבצע צוק איתן',
+    year: 2014,
+    icon: '💥',
+    clues: [
+      'המבצע כלל פעילות קרקעית בעזה לצד הפצצות אוויריות',
+      'מנהרות שימשו כגורם מרכזי במבצע',
+      'זה היה הסבב הקשה ביותר עם חמאס עד אז',
+    ],
+    options: ['מבצע עופרת יצוקה', 'מבצע עמוד ענן', 'מבצע צוק איתן', 'מלחמת לבנון השנייה'],
+  },
+];
+
+let questions = [];
+let current = 0;
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let revealedClues = 0;
+let answered = false;
+const POINTS = [30, 20, 10];
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function startGame() {
+  questions = shuffle(WARS);
+  current = 0; score = 0; correctCount = 0; wrongCount = 0;
+  document.getElementById('overlay').classList.remove('active');
+  loadQuestion();
+}
+
+function loadQuestion() {
+  if (current >= questions.length) { showResult(); return; }
+  const q = questions[current];
+  revealedClues = 1;
+  answered = false;
+
+  // Update HUD
+  document.getElementById('qNum').textContent = current + 1;
+  document.getElementById('score').textContent = score;
+  document.getElementById('correct').textContent = correctCount;
+  document.getElementById('wrong').textContent = wrongCount;
+  document.getElementById('progressFill').style.width = (current / questions.length * 100) + '%';
+  document.getElementById('progressText').textContent = `${current} / ${questions.length}`;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('nextBtn').style.display = 'none';
+  document.getElementById('revealBtn').disabled = false;
+  document.getElementById('pointsTag').textContent = `💎 ${POINTS[0]} נקודות`;
+
+  // Clue dots
+  const counter = document.getElementById('clueCounter');
+  counter.innerHTML = '';
+  q.clues.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'clue-dot' + (i === 0 ? ' revealed' : '');
+    d.textContent = i + 1;
+    counter.appendChild(d);
+  });
+
+  // Show first clue
+  renderClues(q, 1);
+
+  // Answer buttons
+  const grid = document.getElementById('answerGrid');
+  grid.innerHTML = '';
+  shuffle(q.options).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.innerHTML = `<span class="btn-icon">${WARS.find(w=>w.name===opt)?.icon||'🔹'}</span>${opt}`;
+    btn.onclick = () => checkAnswer(opt, q.name, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function renderClues(q, count) {
+  const list = document.getElementById('cluesList');
+  list.innerHTML = '';
+  for (let i = 0; i < count; i++) {
+    const item = document.createElement('div');
+    item.className = 'clue-item show';
+    item.style.animationDelay = `${i * 0.1}s`;
+    item.innerHTML = `<div class="clue-num">${i+1}</div><div class="clue-text">${q.clues[i]}</div>`;
+    list.appendChild(item);
+  }
+  if (count < q.clues.length) {
+    const hidden = document.createElement('div');
+    hidden.className = 'clue-hidden';
+    hidden.innerHTML = `🔒 רמז ${count+1} — לחץ "גלה רמז" כדי לראות (−10 נקודות)`;
+    list.appendChild(hidden);
+  }
+}
+
+function revealNextClue() {
+  const q = questions[current];
+  if (revealedClues >= q.clues.length || answered) return;
+  revealedClues++;
+  const pts = POINTS[Math.min(revealedClues - 1, POINTS.length - 1)];
+  document.getElementById('pointsTag').textContent = `💎 ${pts} נקודות`;
+
+  // Update dots
+  const dots = document.querySelectorAll('.clue-dot');
+  dots[revealedClues - 1].classList.add('revealed');
+
+  renderClues(q, revealedClues);
+  if (revealedClues >= q.clues.length) document.getElementById('revealBtn').disabled = true;
+}
+
+function checkAnswer(chosen, correct, btn) {
+  if (answered) return;
+  answered = true;
+  const pts = POINTS[Math.min(revealedClues - 1, POINTS.length - 1)];
+
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.includes(correct)) b.classList.add('correct');
+  });
+
+  const fb = document.getElementById('feedback');
+  if (chosen === correct) {
+    btn.classList.add('correct');
+    score += pts;
+    correctCount++;
+    fb.className = 'feedback success';
+    fb.textContent = `✅ נכון! +${pts} נקודות`;
+  } else {
+    btn.classList.add('wrong');
+    wrongCount++;
+    fb.className = 'feedback fail';
+    fb.textContent = `❌ לא נכון. התשובה: ${correct}`;
+  }
+
+  document.getElementById('revealBtn').disabled = true;
+  document.getElementById('nextBtn').style.display = 'block';
+  document.getElementById('score').textContent = score;
+}
+
+function skipQuestion() {
+  if (answered) { nextQuestion(); return; }
+  answered = true;
+  const q = questions[current];
+  wrongCount++;
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback fail';
+  fb.textContent = `⏭️ דילגת. התשובה הייתה: ${q.name}`;
+  document.querySelectorAll('.answer-btn').forEach(b => {
+    b.disabled = true;
+    if (b.textContent.includes(q.name)) b.classList.add('correct');
+  });
+  document.getElementById('revealBtn').disabled = true;
+  document.getElementById('nextBtn').style.display = 'block';
+  document.getElementById('wrong').textContent = wrongCount;
+}
+
+function nextQuestion() { current++; loadQuestion(); }
+
+function showResult() {
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressText').textContent = `${questions.length} / ${questions.length}`;
+  const pct = correctCount / questions.length;
+  let emoji, title, sub;
+  if (pct === 1) { emoji='🏆'; title='מושלם!'; sub='ענית נכון על כל השאלות!'; }
+  else if (pct >= 0.7) { emoji='😎'; title='כל הכבוד!'; sub=`${correctCount}/${questions.length} תשובות נכונות`; }
+  else if (pct >= 0.5) { emoji='📚'; title='לא רע!'; sub=`${correctCount}/${questions.length}. כדאי לחזור על החומר`; }
+  else { emoji='💡'; title='תנסה שוב!'; sub=`${correctCount}/${questions.length}. אתה יכול טוב יותר!`; }
+  document.getElementById('rEmoji').textContent = emoji;
+  document.getElementById('rTitle').textContent = title;
+  document.getElementById('rSub').textContent = sub;
+  document.getElementById('rScore').textContent = score + ' נקודות';
+  document.getElementById('overlay').classList.add('active');
+}
+
+startGame();
+</script>
+</body>
+</html>
