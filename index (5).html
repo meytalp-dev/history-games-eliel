@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>משחקי היסטוריה — מלחמות ישראל</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700;900&family=Secular+One&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --card-bg: #131929;
+    --border: rgba(250,204,21,0.2);
+    --gold: #facc15;
+    --gold2: #f97316;
+    --text: #f1f5f9;
+    --muted: rgba(241,245,249,0.5);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Rubik', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(250,204,21,0.07) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 90%, rgba(249,115,22,0.07) 0%, transparent 50%);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .star-row {
+    font-size: 1.4rem;
+    letter-spacing: 8px;
+    color: var(--gold);
+    margin-bottom: 14px;
+    opacity: 0.7;
+  }
+
+  h1 {
+    font-family: 'Secular One', sans-serif;
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+  }
+
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold2));
+    margin: 18px auto 0;
+    border-radius: 2px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 22px;
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px 28px;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.2s; }
+  .card:nth-child(3) { animation-delay: 0.3s; }
+  .card:nth-child(4) { animation-delay: 0.4s; }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--accent-a, rgba(250,204,21,0.06)), transparent 60%);
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px var(--accent-a, rgba(250,204,21,0.4));
+    border-color: var(--accent-a, rgba(250,204,21,0.5));
+  }
+
+  .card.c1 { --accent-a: rgba(250,204,21,0.45); }
+  .card.c2 { --accent-a: rgba(249,115,22,0.45); }
+  .card.c3 { --accent-a: rgba(0,255,180,0.35); }
+  .card.c4 { --accent-a: rgba(99,102,241,0.45); }
+
+  .emoji {
+    font-size: 2.4rem;
+    line-height: 1;
+  }
+
+  .card-title {
+    font-family: 'Secular One', sans-serif;
+    font-size: 1.3rem;
+    line-height: 1.3;
+  }
+
+  .card-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .btn {
+    margin-top: 8px;
+    padding: 9px 22px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Rubik', sans-serif;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn:hover { opacity: 0.85; }
+
+  .c1 .btn { background: var(--gold); color: #0b0f1a; }
+  .c2 .btn { background: var(--gold2); color: #0b0f1a; }
+  .c3 .btn { background: #00ffb4; color: #050a0f; }
+  .c4 .btn { background: #818cf8; color: #0b0f1a; }
+
+  footer {
+    margin-top: 52px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-align: center;
+    animation: fadeUp 0.7s 0.5s ease both;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="star-row">✦ ✦ ✦</div>
+  <h1>משחקי היסטוריה</h1>
+  <p class="subtitle">מלחמות ישראל — בחרו משחק והתחילו לשחק!</p>
+  <div class="divider"></div>
+</header>
+
+<div class="grid">
+
+  <a href="israel-wars-timeline.html" class="card c1">
+    <div class="emoji">🗺️</div>
+    <div class="card-title">ציר הזמן של מלחמות ישראל</div>
+    <div class="card-desc">סדרו את המלחמות לפי סדר כרונולוגי נכון על ציר הזמן.</div>
+    <div class="btn">שחק עכשיו ←</div>
+  </a>
+
+  <a href="game1-mi-ani.html" class="card c2">
+    <div class="emoji">🕵️</div>
+    <div class="card-title">מי אני? — ניחוש מלחמה</div>
+    <div class="card-desc">קבלו רמזים ונחשו על איזו מלחמה מדובר. כמה רמזים תצטרכו?</div>
+    <div class="btn">שחק עכשיו ←</div>
+  </a>
+
+  <a href="game5-neged-hasheon.html" class="card c3">
+    <div class="emoji">⏱️</div>
+    <div class="card-title">נגד השעון! — 60 שניות</div>
+    <div class="card-desc">ענו על כמה שיותר שאלות ב-60 שניות. מהירות ודיוק!</div>
+    <div class="btn">שחק עכשיו ←</div>
+  </a>
+
+  <a href="game3-ma-kadam.html" class="card c4">
+    <div class="emoji">📅</div>
+    <div class="card-title">מה קדם למה?</div>
+    <div class="card-desc">קבעו מה קרה קודם — אירועים, מלחמות, תאריכים היסטוריים.</div>
+    <div class="btn">שחק עכשיו ←</div>
+  </a>
+
+</div>
+
+<footer>כל הזכויות שמורות &copy; 2025 &nbsp;|&nbsp; בהצלחה! 🎯</footer>
+
+</body>
+</html>
